@@ -1,0 +1,53 @@
+import requests
+import binascii
+import json
+import sys
+import logging
+import time
+from threading import Thread
+from threading import Lock
+from colorlog import ColoredFormatter
+from libcontractvm import Wallet
+from libcontractvm import ConsensusManager
+from . import Log
+
+logger = logging.getLogger('libcontractvm')
+
+class PluginManager:
+	def __init__ (self, consensusmgr, wallet):
+		self.consensusManager = consensusmgr
+		self.wallet = wallet
+		
+	def _produce_transaction (self, method, arguments):
+		logger.info ('Producing transaction: %s %s', method, str (arguments))
+
+		while True:
+			best = self.consensusManager.getBestNode()
+
+			# Create the transaction
+			res = self.consensusManager.jsonCall (best, method, arguments)
+			#print (res, best)
+			txhash = self.wallet.createTransaction ([res['outscript']], res['fee'])
+
+			if txhash == None:
+				logger.error ('Failed to create transaction')
+				time.sleep (5)
+				continue
+
+			# Broadcast the transaction
+			cid = self.consensusManager.jsonCall (best, 'broadcast', [txhash, res['tempid']])
+
+			if cid == None:
+				logger.error ('Broadcast failed')
+				time.sleep (5)
+				continue
+
+			cid = cid['txid']
+
+			if cid != None:
+				logger.info ('Broadcasting transaction: %s', cid)
+				return cid
+			else:
+				logger.error ('Failed to produce transaction, retrying in 5 seconds')
+				time.sleep (5)
+
