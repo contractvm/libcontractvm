@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+# Copyright (c) 2015 Davide Gessa
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
 # Simulation 2: malicious nodes / interaction / avg error rate
 # Per ogni iterazione, misurare l'errore medio attuale ed il numero di nodi malevoli
 # I risultati sono tutti zero, l'errore inizia ad aumentare per k=9
