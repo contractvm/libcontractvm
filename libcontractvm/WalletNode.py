@@ -31,9 +31,6 @@ class WalletNode (Wallet.Wallet):
 		self.url = url
 		super (WalletNode, self).__init__ (chain, address, wif, wallet_file)
 
-	def _gen (self):
-		raise Exception ()
-
 
 	def _do_request (self, command, args = []):
 		payload = {

@@ -66,6 +66,26 @@ class Wallet:
 
 		logger.info ('Setting up player %s', self.address)
 
+	def _gen (self):
+		logger.debug ('Generating entropy for new wallet...')
+
+		# Generate entropy
+		entropy = bytearray()
+		try:
+			entropy.extend(open("/dev/random", "rb").read(64))
+		except Exception:
+			print("warning: can't use /dev/random as entropy source", file=sys.stdout)
+		entropy = bytes(entropy)
+
+		if len(entropy) < 64:
+			raise OSError("can't find sources of entropy")
+
+
+		secret_exponent = int(binascii.hexlify (entropy)[0:32], 16)
+		wif = secret_exponent_to_wif(secret_exponent, compressed=True, wif_prefix=wif_prefix_for_netcode (self.chain))
+		key = Key (secret_exponent=secret_exponent, netcode=self.chain)	
+		return (str (key.address ()), str (key.wif ()))
+
 
 	def createTransaction (self, outs, fee):
 		# Create the signed transaction
