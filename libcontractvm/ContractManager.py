@@ -18,7 +18,7 @@ from . import Log
 
 logger = logging.getLogger('libcontractvm')
 
-class ContractManager:
+class DappManager:
 	BLOCKING_TIMEOUT = 5
 	POLLING_TIMEOUT = 15
 

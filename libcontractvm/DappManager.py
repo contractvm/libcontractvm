@@ -17,7 +17,7 @@ from . import Log
 
 logger = logging.getLogger('libcontractvm')
 
-class PluginManager:
+class DappManager:
 	def __init__ (self, consensusmgr, wallet):
 		self.consensusManager = consensusmgr
 		self.wallet = wallet

@@ -74,7 +74,7 @@ class Wallet:
 		try:
 			entropy.extend(open("/dev/random", "rb").read(64))
 		except Exception:
-			print("warning: can't use /dev/random as entropy source", file=sys.stdout)
+			print("warning: can't use /dev/random as entropy source")
 		entropy = bytes(entropy)
 
 		if len(entropy) < 64:
