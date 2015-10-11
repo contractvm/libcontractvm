@@ -22,7 +22,7 @@ class DappManager:
 		self.consensusManager = consensusmgr
 		self.wallet = wallet
 		
-	def _produce_transaction (self, method, arguments):
+	def _produce_transaction (self, method, arguments, bmethod = 'broadcast'):
 		logger.info ('Producing transaction: %s %s', method, str (arguments))
 
 		while True:
@@ -39,7 +39,7 @@ class DappManager:
 				continue
 
 			# Broadcast the transaction
-			cid = self.consensusManager.jsonCall (best, 'broadcast', [txhash, res['tempid']])
+			cid = self.consensusManager.jsonCall (best, bmethod, [txhash, res['tempid']])
 
 			if cid == None:
 				logger.error ('Broadcast failed')
