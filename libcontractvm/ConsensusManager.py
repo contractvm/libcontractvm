@@ -44,8 +44,9 @@ class ConsensusManager:
 		if c != None:
 			print (c)
 			for nn in c:
-				logger.info ('New node found: ' + nn[0] + ":" + str(nn[1]))
-		
+				if nn['info'] != None:
+					logger.info ('New node found: ' + nn['host'] + ":" + str(nn['port']))
+					self.addNode (nn['host']+':'+str(nn['info']))
 
 	# Add a new node
 	def addNode (self, node):
