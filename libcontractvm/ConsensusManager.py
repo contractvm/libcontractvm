@@ -6,10 +6,9 @@ import logging
 import json
 import requests
 import time
-
 import threading
-from threading import Thread
-from threading import Lock
+import copy
+from threading import Thread, Timer, Lock
 from queue import Queue
 from random import shuffle
 
@@ -21,12 +20,17 @@ logger = logging.getLogger('libcontractvm')
 POLICY_ONLY_NEGATIVE = 0
 POLICY_BOTH = 1
 POLICY_NONE = 2
+
+BOOTSTRAP_TIMER = 20
 	
 class ConsensusManager:
 	def __init__ (self, chain = 'XLT', policy = POLICY_BOTH):
 		self.chain = chain
 		self.nodes = {}
 		self.policy = policy
+		self.bootmer = Timer (BOOTSTRAP_TIMER, self.bootstrapSched)
+		self.bootmer.start ()
+		self.nodeslock = Lock ()
 
 	# Return a list
 	def getNodes (self):
@@ -39,33 +43,54 @@ class ConsensusManager:
 	
 	# Bootstrap from a node
 	def bootstrap (self, node):
-		logger.debug ('Initiating bootstrap from ' + node + '...')
+		self.addNode (node, bootstrap=False)
+
+		logger.debug ('Bootstrap from ' + node + '...')
 		c = self.jsonCall (node, 'net.peers')
 		if c != None:
-			print (c)
+			#print (c)
 			for nn in c:
 				if nn['info'] != None:
-					logger.info ('New node found: ' + nn['host'] + ":" + str(nn['port']))
-					self.addNode (nn['host']+':'+str(nn['info']))
+					self.addNode ('http://'+nn['host']+':'+str(nn['info']))
+
+
+	def bootstrapSched (self):
+		self.nodeslock.acquire ()
+		nodes = copy.deepcopy (self.nodes)
+		self.nodeslock.release ()
+
+		for node in nodes:
+			self.bootstrap (node)
+
+		self.bootmer = Timer (BOOTSTRAP_TIMER, self.bootstrapSched)
+		self.bootmer.start ()
 
 	# Add a new node
-	def addNode (self, node):
+	def addNode (self, node, bootstrap=True):
+		self.nodeslock.acquire ()
+		#print (self.nodes)
 		if node in self.nodes:
-			logger.warning ('Duplicated node')
+			#	logger.warning ('Duplicated node')
+			self.nodeslock.release ()
 			return False
 
 		c = self.jsonCall (node, 'info')
 
 		if c == None:
-			logger.error ('Unreachable node ' + node)
+			#logger.error ('Unreachable node ' + node)
+			self.nodeslock.release ()
 			return False
 
 		if c['chain']['code'] != self.chain:
 			logger.error ('Different chain between node and client ' + node)
+			self.nodeslock.release ()
 			return False
 
 		self.nodes[node] = { 'reputation': 1.0, 'calls': 0 }
+		logger.info ('New node found: ' + node)
+		self.nodeslock.release ()
 		self.bootstrap (node)
+		
 		return True
 
 	def getBestNode (self):
@@ -166,6 +191,6 @@ class ConsensusManager:
 			else:
 				return d['result']
 		except:
-			logger.error ('Failed to contact the node '+node)
+			#logger.error ('Failed to contact the node '+node)
 			if queue == None:
 				return None
