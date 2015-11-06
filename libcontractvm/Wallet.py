@@ -31,7 +31,7 @@ class Wallet:
 		self.wallet_file = wallet_file
 		self.chain = chain
 
-		if self.address == None:
+		if self.address == None or self.wif == None:
 			if self.wallet_file != None:
 				try:
 					# Try to load
@@ -61,10 +61,12 @@ class Wallet:
 					logger.info ('Saved wallet to %s', self.wallet_file)
 		else:
 			if self.wallet_file != None:
-				# Save data on wallet
-				pass
+				f = open (self.wallet_file, 'w')
+				f.write (self.address+','+self.wif)
+				f.close ()
 
 		logger.info ('Setting up player %s', self.address)
+
 
 	def _gen (self):
 		logger.debug ('Generating entropy for new wallet...')
@@ -80,10 +82,9 @@ class Wallet:
 		if len(entropy) < 64:
 			raise OSError("can't find sources of entropy")
 
-
 		secret_exponent = int(binascii.hexlify (entropy)[0:32], 16)
 		wif = secret_exponent_to_wif(secret_exponent, compressed=True, wif_prefix=wif_prefix_for_netcode (self.chain))
-		key = Key (secret_exponent=secret_exponent, netcode=self.chain)	
+		key = Key (secret_exponent=secret_exponent, netcode=self.chain)
 		return (str (key.address ()), str (key.wif ()))
 
 
@@ -100,8 +101,6 @@ class Wallet:
 
 		for o in outs:
 			t.txs_out.append (TxOut (0.0, tools.compile (o)))
-
-
 
 		secret_exponent = wif_to_secret_exponent(self.wif, allowable_wif_prefixes=[wif_prefix_for_netcode (self.chain)])
 		d = {}
@@ -121,4 +120,3 @@ class Wallet:
 
 	def getPair (self):
 		return (self.address, self.wif)
-

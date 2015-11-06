@@ -2,6 +2,8 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+import sys
+import signal
 import logging
 import json
 import requests
@@ -22,7 +24,8 @@ POLICY_BOTH = 1
 POLICY_NONE = 2
 
 BOOTSTRAP_TIMER = 20
-	
+
+
 class ConsensusManager:
 	def __init__ (self, chain = 'XLT', policy = POLICY_BOTH):
 		self.chain = chain
@@ -40,7 +43,7 @@ class ConsensusManager:
 	def getChain (self):
 		return self.chain
 
-	
+
 	# Bootstrap from a node
 	def bootstrap (self, node):
 		self.addNode (node, bootstrap=False)
@@ -90,7 +93,7 @@ class ConsensusManager:
 		logger.info ('New node found: ' + node)
 		self.nodeslock.release ()
 		self.bootstrap (node)
-		
+
 		return True
 
 	def getBestNode (self):
@@ -104,7 +107,7 @@ class ConsensusManager:
 		return ordered_nodes [0][0]
 
 
-	
+
 	# Perform a call with consensus algorithm
 	def jsonConsensusCall (self, command, args = []):
 		res = self.jsonCallFromAll (command, args)
@@ -150,7 +153,7 @@ class ConsensusManager:
 		logger.debug ("Found consensus majority with score %f of %d nodes", resgroups[max]['score'], len (resgroups[max]['nodes']))
 		if len (resgroups) == None:
 			return None
-		
+
 		return resgroups[max]
 
 

@@ -7,10 +7,11 @@ from setuptools import find_packages
 from setuptools import setup
 
 setup(name='libcontractvm',
-	version='0.6',
+	version='0.6.2',
 	description='Contractvm client library',
 	author='Davide Gessa',
 	setup_requires='setuptools',
 	author_email='gessadavide@gmail.com',
-	packages=['libcontractvm']
+	packages=['libcontractvm'],
+	install_requires=open ('requirements.txt', 'r').read ().split ('\n')
 )

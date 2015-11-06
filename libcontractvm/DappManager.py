@@ -8,6 +8,7 @@ import json
 import sys
 import logging
 import time
+import signal
 from threading import Thread
 from threading import Lock
 from colorlog import ColoredFormatter
@@ -17,11 +18,13 @@ from . import Log
 
 logger = logging.getLogger('libcontractvm')
 
+
 class DappManager:
 	def __init__ (self, consensusmgr, wallet):
 		self.consensusManager = consensusmgr
 		self.wallet = wallet
-		
+
+
 	def _produce_transaction (self, method, arguments, bmethod = 'broadcast'):
 		logger.info ('Producing transaction: %s %s', method, str (arguments))
 
@@ -54,4 +57,3 @@ class DappManager:
 			else:
 				logger.error ('Failed to produce transaction, retrying in 5 seconds')
 				time.sleep (5)
-

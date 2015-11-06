@@ -25,9 +25,8 @@ from . import Log
 logger = logging.getLogger('libcontractvm')
 
 class WalletChainSo (Wallet.Wallet):
-	def __init__ (self, chain = 'XTN', address = None, wif = None, wallet_file = None):
+	def __init__ (self, chain = 'XLT', address = None, wif = None, wallet_file = None):
 		super (WalletChainSo, self).__init__ (chain, address, wif, wallet_file)
-
 
 
 	def _chaincodeToChainSoName (self, code):
@@ -41,6 +40,7 @@ class WalletChainSo (Wallet.Wallet):
 			code = self.chain
 
 		return code
+
 
 	def _spendables (self, value):
 		code = self._chaincodeToChainSoName (self.chain)
@@ -58,7 +58,7 @@ class WalletChainSo (Wallet.Wallet):
 				txid += s['txid'][x:x+2]
 
 			tot += int (float (s['value']) * 100000000)
-			sps.append (Spendable.from_dict ({'coin_value': int (float (s['value']) * 100000000), 
+			sps.append (Spendable.from_dict ({'coin_value': int (float (s['value']) * 100000000),
 				'script_hex': s['script_hex'], 'tx_hash_hex': txid, 'tx_out_index': int (s['output_no'])}))
 
 			if tot >= value:
@@ -67,11 +67,9 @@ class WalletChainSo (Wallet.Wallet):
 		return sps
 
 
-
 	def getBalance (self):
 		code = self._chaincodeToChainSoName (self.chain)
 
 		u = 'https://chain.so/api/v2/get_address_balance/'+code+'/'+self.address
 		d = requests.get (u, headers={'content-type': 'application/json'}).json()
-		return float (d['data']['confirmed_balance'])
-
+		return float (d['data']['confirmed_balance']) + float (d['data']['unconfirmed_balance'])

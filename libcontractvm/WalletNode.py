@@ -27,7 +27,7 @@ from libcontractvm import Wallet
 logger = logging.getLogger('libcontractvm')
 
 class WalletNode (Wallet.Wallet):
-	def __init__ (self, chain = 'XTN', address = None, wif = None, wallet_file = None, url = None):
+	def __init__ (self, chain = 'XLT', address = None, wif = None, wallet_file = None, url = None):
 		self.url = url
 		super (WalletNode, self).__init__ (chain, address, wif, wallet_file)
 
@@ -53,7 +53,6 @@ class WalletNode (Wallet.Wallet):
 				txid = ''
 				for x in range (len (s['txid']), -2, -2):
 					txid += s['txid'][x:x+2]
-
 
 				tot += int (float (s['amount']) * 100000000)
 				sps.append (Spendable.from_dict ({'coin_value': int (float (s['amount']) * 100000000),
