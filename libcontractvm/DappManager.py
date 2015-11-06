@@ -25,7 +25,7 @@ class DappManager:
 		self.wallet = wallet
 
 
-	def _produce_transaction (self, method, arguments, bmethod = 'broadcast'):
+	def produceTransaction (self, method, arguments, bmethod = 'broadcast'):
 		logger.info ('Producing transaction: %s %s', method, str (arguments))
 
 		while True:
