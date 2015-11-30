@@ -25,7 +25,7 @@ from . import Log
 logger = logging.getLogger('libcontractvm')
 
 class WalletChainSo (Wallet.Wallet):
-	def __init__ (self, chain = 'XLT', address = None, wif = None, wallet_file = None):
+	def __init__ (self, chain = 'XTN', address = None, wif = None, wallet_file = None):
 		super (WalletChainSo, self).__init__ (chain, address, wif, wallet_file)
 
 
@@ -46,6 +46,7 @@ class WalletChainSo (Wallet.Wallet):
 		code = self._chaincodeToChainSoName (self.chain)
 
 		u = 'https://chain.so/api/v2/get_tx_unspent/'+code+'/'+self.address
+		#print (u)
 		d = requests.get (u, headers={'content-type': 'application/json'}).json()
 
 		sps = []

@@ -29,8 +29,9 @@ class DappManager:
 		logger.info ('Producing transaction: %s %s', method, str (arguments))
 
 		while True:
+			#print ('search for best')
 			best = self.consensusManager.getBestNode()
-
+			#print (best)
 			# Create the transaction
 			res = self.consensusManager.jsonCall (best, method, arguments)
 			#print (res, best)
