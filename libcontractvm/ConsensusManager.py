@@ -27,7 +27,7 @@ BOOTSTRAP_TIMER = 20
 
 
 class ConsensusManager:
-	def __init__ (self, chain = 'XLT', policy = POLICY_BOTH):
+	def __init__ (self, chain = 'XTN', policy = POLICY_BOTH):
 		self.chain = chain
 		self.nodes = {}
 		self.policy = policy
@@ -97,6 +97,7 @@ class ConsensusManager:
 		return True
 
 	def getBestNode (self):
+		#print (self.nodes.items())
 		dictlist = []
 		for key, value in self.nodes.items():
 			temp = [key,value]
