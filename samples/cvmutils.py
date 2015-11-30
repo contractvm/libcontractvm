@@ -9,7 +9,7 @@ import time
 def spawnCVMD (n, port, apiport, chain, datapath, params = [], delay = 5):
     #"xterm", "-rv", "-e",
     #"urxvt", "-e", 
-    pid = subprocess.Popen(["xterm", "-rv", "-e", "contractvmd", "--discard-old-blocks", "--api-port="+str(apiport),
+    pid = subprocess.Popen(["xterm", "-rv", "-e", "contractvmd", , "--api-port="+str(apiport),
                     "--port="+str(port), "--chain="+chain, "--data="+datapath] + params,
                     stderr=subprocess.STDOUT).pid #, stdout=subprocess.PIPE
     time.sleep (delay)
