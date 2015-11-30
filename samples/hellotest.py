@@ -5,7 +5,6 @@
 
 from libcontractvm import ConsensusManager
 import sys
-import config
 import time
 
 consMan = ConsensusManager.ConsensusManager ()

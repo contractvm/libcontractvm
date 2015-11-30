@@ -39,7 +39,7 @@ class DappManager:
 
 			if txhash == None:
 				logger.error ('Failed to create transaction')
-				time.sleep (5)
+				time.sleep (10)
 				continue
 
 			# Broadcast the transaction
@@ -47,7 +47,7 @@ class DappManager:
 
 			if cid == None:
 				logger.error ('Broadcast failed')
-				time.sleep (5)
+				time.sleep (10)
 				continue
 
 			cid = cid['txid']
@@ -56,5 +56,5 @@ class DappManager:
 				logger.info ('Broadcasting transaction: %s', cid)
 				return cid
 			else:
-				logger.error ('Failed to produce transaction, retrying in 5 seconds')
-				time.sleep (5)
+				logger.error ('Failed to produce transaction, retrying in 10 seconds')
+				time.sleep (10)

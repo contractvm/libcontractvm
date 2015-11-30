@@ -10,7 +10,7 @@ import os
 import sys
 import time
 import subprocess
-from libcontractvm import Wallet, WalletChainSo, ContractManager, ContractException, ConsensusManager
+from libcontractvm import Wallet, WalletExplorer, ContractManager, ContractException, ConsensusManager
 import cvmutils
 import threading
 from threading import Lock, Thread

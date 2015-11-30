@@ -24,9 +24,9 @@ from libcontractvm import Wallet
 from . import Log
 logger = logging.getLogger('libcontractvm')
 
-class WalletChainSo (Wallet.Wallet):
+class WalletExplorer (Wallet.Wallet):
 	def __init__ (self, chain = 'XTN', address = None, wif = None, wallet_file = None):
-		super (WalletChainSo, self).__init__ (chain, address, wif, wallet_file)
+		super (WalletExplorer, self).__init__ (chain, address, wif, wallet_file)
 
 
 	def _chaincodeToChainSoName (self, code):
