@@ -54,15 +54,16 @@ class WalletExplorer (Wallet.Wallet):
 		random.shuffle (d['data']['txs'])
 		for s in d['data']['txs']:
 			#if int (s['confirmations']) > 0:
-			txid = ''
-			for x in range (len (s['txid']), -2, -2):
-				txid += s['txid'][x:x+2]
+			txid = s['txid'] #''
+			#for x in range (len (s['txid']), -2, -2):
+			#	txid += s['txid'][x:x+2]
 
 			tot += int (float (s['value']) * 100000000)
 			sps.append (Spendable.from_dict ({'coin_value': int (float (s['value']) * 100000000),
 				'script_hex': s['script_hex'], 'tx_hash_hex': txid, 'tx_out_index': int (s['output_no'])}))
 
 			if tot >= value:
+				#print (sps)
 				return sps
 
 		return sps
