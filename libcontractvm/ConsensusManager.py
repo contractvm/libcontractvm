@@ -107,7 +107,16 @@ class ConsensusManager:
 		ordered_nodes = sorted (dictlist, key=lambda node: node[1]['reputation'])
 		return ordered_nodes [0][0]
 
+	def currentBlockHeight (self):
+		return int (self.jsonConsensusCall ('info')['result']['chain']['height'])
 
+	def waitBlock (self):
+		ch = self.currentBlockHeight () 
+		while self.currentBlockHeight () <= ch:
+			logger.debug ('Waiting for new block...')
+			time.sleep (30)
+		logger.info ('New block found!')
+		
 
 	# Perform a call with consensus algorithm
 	def jsonConsensusCall (self, command, args = []):

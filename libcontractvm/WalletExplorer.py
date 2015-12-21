@@ -26,6 +26,7 @@ logger = logging.getLogger('libcontractvm')
 
 class WalletExplorer (Wallet.Wallet):
 	def __init__ (self, chain = 'XTN', address = None, wif = None, wallet_file = None):
+		self.lockedspendables = []
 		super (WalletExplorer, self).__init__ (chain, address, wif, wallet_file)
 
 
@@ -47,31 +48,53 @@ class WalletExplorer (Wallet.Wallet):
 
 		u = 'https://chain.so/api/v2/get_tx_unspent/'+code+'/'+self.address
 		#print (u)
-		d = requests.get (u, headers={'content-type': 'application/json'}).json()
 
-		sps = []
-		tot = 0
-		random.shuffle (d['data']['txs'])
-		for s in d['data']['txs']:
-			#if int (s['confirmations']) > 0:
-			txid = s['txid'] #''
-			#for x in range (len (s['txid']), -2, -2):
-			#	txid += s['txid'][x:x+2]
+		while True:
+			try:
+				d = requests.get (u, headers={'content-type': 'application/json'}).json()
+			except:
+				time.sleep (5)
+				continue
+			
 
-			tot += int (float (s['value']) * 100000000)
-			sps.append (Spendable.from_dict ({'coin_value': int (float (s['value']) * 100000000),
-				'script_hex': s['script_hex'], 'tx_hash_hex': txid, 'tx_out_index': int (s['output_no'])}))
+			sps = []
+			tot = 0
+			random.shuffle (d['data']['txs'])
+			for s in d['data']['txs']:
+				#if int (s['confirmations']) > 0:
+				txid = s['txid'] #''
+				#for x in range (len (s['txid']), -2, -2):
+				#	txid += s['txid'][x:x+2]
+	
+				if (txid+':'+str (s['output_no'])) in self.lockedspendables:
+					#print ('Locked spendable')
+					continue
 
-			if tot >= value:
-				#print (sps)
-				return sps
+				tot += int (float (s['value']) * 100000000)
+				sps.append (Spendable.from_dict ({'coin_value': int (float (s['value']) * 100000000),
+					'script_hex': s['script_hex'], 'tx_hash_hex': txid, 'tx_out_index': int (s['output_no'])}))
 
-		return sps
+				self.lockedspendables.append (txid+':'+str (s['output_no']))
+
+				if tot >= value:
+					#print (sps)
+					return sps
+
+			return sps
 
 
 	def getBalance (self):
 		code = self._chaincodeToChainSoName (self.chain)
 
 		u = 'https://chain.so/api/v2/get_address_balance/'+code+'/'+self.address
-		d = requests.get (u, headers={'content-type': 'application/json'}).json()
-		return float (d['data']['confirmed_balance']) + float (d['data']['unconfirmed_balance'])
+
+		while True:
+			try:
+				d = requests.get (u, headers={'content-type': 'application/json'}).json()
+			except:
+				time.sleep (5)
+				continue
+
+			return float (d['data']['confirmed_balance']) + float (d['data']['unconfirmed_balance'])
+
+

@@ -38,7 +38,7 @@ class DappManager:
 			txhash = self.wallet.createTransaction ([res['outscript']], res['fee'])
 
 			if txhash == None:
-				logger.error ('Failed to create transaction')
+				logger.error ('Failed to create transaction, retrying in few seconds...')
 				time.sleep (10)
 				continue
 
